@@ -1,6 +1,16 @@
 <?php
-session_start();
 include('../db.php');
+session_start();
+
+
+if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
+    $user_id = $_SESSION['id']; // Obtém o id do usuário da sessão
+} else {
+    // Se a variável de sessão 'id' não estiver definida ou estiver vazia, redireciona para a página de login
+    header("Location: ../users/login.php");
+    exit(); // Certifica-se de que o código não será executado após o redirecionamento
+}
+
 
 
 
@@ -26,8 +36,8 @@ if (isset($_POST['Enviar'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $_SESSION['id'] = $_POST['user_id'];
-    $user_id = $_SESSION['id'];
+    //$_SESSION['id'] = $_POST['user_id'];
+    //$user_id = $_SESSION['id'];
 
     if (!isset($errorMsg)) {
         $sql = "UPDATE passwords SET email = '$email', password = '$password' WHERE id = '$id'";
@@ -35,13 +45,11 @@ if (isset($_POST['Enviar'])) {
         if ($result) {
             $successMsg = 'Registro atualizado com sucesso';
             echo $successMsg;
+	    header("Location: ../index.php");
+	    exit();
         }
 
-        ?>
-        <script>
-            window.location.href = "../index.php";
-        </script>
-        <?php
+       
     } else {
         $errorMsg = 'Error ' . mysqli_error($conn);
         echo $errorMsg;
